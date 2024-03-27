@@ -67,11 +67,11 @@ New visualization created with random data
 
 ![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/79049f84-5196-4cf2-88ed-a300483c7568)
 
-Adding IP to Domain
+**Adding IP to Domain**
 <br/> If u bought any domain you can connect your IP server to it. Just add new recod in DNS. Add "A" record and paste your IP. You can chek if it is already connected here https://dnschecker.org/ . You can now check you Grafana by writing domain.com:3000
 
-Reverse Proxy with Nginx
-Now you have to write every time :3000 port in url, to get rid off it you have to configure webserver nginx. 
+**Reverse Proxy with Nginx**
+<br/>Now you have to write every time :3000 port in url, to get rid off it you have to configure webserver nginx. 
 
 <br/>sudo apt install nginx
 <br/>nginx -v
