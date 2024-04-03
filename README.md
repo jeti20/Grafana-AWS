@@ -4,7 +4,8 @@ A project showing how to create an example monitoring using EC2 instances from A
 [Installing Grafana](#installing-grafana-on-ec2)
  <br> [Adding IP to Domain](#adding-ip-to-domain)
  <br> [Reverse Proxy with Nginx](#reverse-proxy-with-nginx)
-
+ <br> [DataSource: MySQL with custom Collector](#mySQL-with-custom-collector)
+ 
 ## Installing Grafana on EC2
 Start with creating EC2 Instance with Ubuntu. On purpose of this project I used the free tier options.
 Set up security group.
@@ -17,25 +18,27 @@ Go to place where u store your private key for ssh and connect with this machine
 and copy example which involve your EC2 instance public IP. Open console in place where you store privatekey for ssh (or use PuTTY) paste copied example with yourip address. If you fail to connect try with "sudo"
 
 If you established connection with your machine type
-
-**apt-get update**
-
+```
+apt-get update
+```
 go to website https://grafana.com/grafana/download?edition=oss and follow steops for Ubuntu and Debian.
 
 Jeśli instalacja przebiegła pomyślnie włącz grafane by
 
 Start the Grafana server using init.d
-
-**sudo service grafana-server start**
- <br> **sudo service grafana-server status**
+```
+sudo service grafana-server start
+sudo service grafana-server status
+```
 
 or 
 
 Start the Grafana server with systemd
-
-**sudo systemctl daemon-reload
- <br>sudo systemctl start grafana-server
- <br>sudo systemctl status grafana-server**
+```
+sudo systemctl daemon-reload
+ sudo systemctl start grafana-server
+ sudo systemctl status grafana-server
+```
 
 If Grafna is running corectly you should see 
 
@@ -76,12 +79,13 @@ New visualization created with random data
 
 ## **Reverse Proxy with Nginx**
 <br/>Now you have to write every time :3000 port in url, to get rid off it you have to configure webserver nginx. 
-
-<br/>sudo apt install nginx
-<br/>nginx -v
-<br/>sudo service nginx status
-<br/>cd /etc/nginx/sites-enabled
-<br/>sudo nano YOUR-DOMAIN-NAME.conf
+```
+sudo apt install nginx
+nginx -v
+sudo service nginx status
+cd /etc/nginx/sites-enabled
+sudo nano YOUR-DOMAIN-NAME.conf
+```
 
 Paste it into this file 
 ```
@@ -98,7 +102,61 @@ server {
 ```
 
 Run this command to check if it was configured good
-<br/>nginx -t
-<br/>If everything was good you should see "nginx: configuration file /etc/nginx/nginx.conf test is successful"
+```
+nginx -t
+```
+If everything was good you should see "nginx: configuration file /etc/nginx/nginx.conf test is successful"
 
 Now you can type Yourdomain.com and see that grafana is working on this address without :3000
+
+## DataSource: **MySQL with custom Collector**
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/84d91627-98a4-43de-a6e4-e021a0abb193)
+
+
+Create new instance of EC2 with open ports for 22 and 3306
+<br/>![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/53566b83-9fde-4484-816e-0d6d4e966f5a)
+```
+sudo apt update
+sudo apt install mysql-server
+sudo service mysql status
+```
+
+Go to https://grafana.com/grafana/dashboards/7991-2mysql-simple-dashboard/ and downoland dashboard and github downoland this file my2_80.sql from https://github.com/meob/my2Collector . Use comand below to downoland this file.
+```
+wget https://raw.githubusercontent.com/meob/my2Collector/master/my2_80.sql
+```
+Open this file with nano and uncomment last 3 lines 
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/0758d5d3-8f61-4ea7-b7f9-1ca2fe268ef1)
+
+Run this script with this command
+```
+sudo mysql < my2_80.sql
+```
+
+Type 
+```
+sudo mysql
+show databases;
+show databases;
+show variables where variable_name = 'event_scheduler';
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/c09f58bc-f5ca-4b90-a2c2-5494a39f99cb)
+
+If it is OFF
+
+
+
+
+```
+select host, user from mysql.user;
+use my2;
+show tables;
+select * from current;
+select * from status;
+quit
+```
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/0a2fb53a-5fda-4c38-9cb0-c64ae1f5bd45)
+
