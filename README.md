@@ -1,12 +1,17 @@
 # Grafana-AWS
 A project showing how to create an example monitoring using EC2 instances from AWS and Grafana.
 
+[Installing Grafana](#installing-grafana-on-ec2)
+ <br> [Adding IP to Domain](#adding-ip-to-domain)
+ <br> [Reverse Proxy with Nginx](#reverse-proxy-with-nginx)
+
+## Installing Grafana on EC2
 Start with creating EC2 Instance with Ubuntu. On purpose of this project I used the free tier options.
 Set up security group.
 
 ![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/f3f5e9dc-e624-4ba5-bdd7-7c2b95ed84e3)
 
- Port 22(SSH) and 3000 (Grafana) should be accessable.
+Port 22(SSH) and 3000 (Grafana) should be accessable.
 
 Go to place where u store your private key for ssh and connect with this machine. On AWS website go into your instance, find and click "Connect" button, then switch to "SSH client"
 and copy example which involve your EC2 instance public IP. Open console in place where you store privatekey for ssh (or use PuTTY) paste copied example with yourip address. If you fail to connect try with "sudo"
@@ -62,15 +67,14 @@ Go to "Dashboards" for mthe left menu and press "+ Add visualization". Choose da
 
 ![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/c005c673-4112-4834-90e9-777ce488b0ab)
 
-
 New visualization created with random data
 
 ![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/79049f84-5196-4cf2-88ed-a300483c7568)
 
-**Adding IP to Domain**
+## **Adding IP to Domain**
 <br/> If u bought any domain you can connect your IP server to it. Just add new recod in DNS. Add "A" record and paste your IP. You can chek if it is already connected here https://dnschecker.org/ . You can now check you Grafana by writing domain.com:3000
 
-**Reverse Proxy with Nginx**
+## **Reverse Proxy with Nginx**
 <br/>Now you have to write every time :3000 port in url, to get rid off it you have to configure webserver nginx. 
 
 <br/>sudo apt install nginx
@@ -80,7 +84,7 @@ New visualization created with random data
 <br/>sudo nano YOUR-DOMAIN-NAME.conf
 
 Paste it into this file 
-
+```
 server {
     listen 80;
     listen [::]:80;
@@ -91,6 +95,7 @@ server {
         proxy_pass           http://localhost:3000/;
     }
 }
+```
 
 Run this command to check if it was configured good
 <br/>nginx -t
