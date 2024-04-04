@@ -177,6 +177,57 @@ select * from current;
 select * from status;
 quit
 ```
+Wpis bind-address = 0.0.0.0 w pliku konfiguracyjnym MySQL (zazwyczaj my.cnf lub my.ini) określa adres IP, na którym serwer MySQL będzie nasłuchiwał połączeń przychodzących. Ustawienie tego na 0.0.0.0 oznacza, że serwer będzie nasłuchiwał na wszystkich interfejsach sieciowych dostępnych na maszynie, co umożliwia przyjmowanie połączeń z dowolnego adresu IP.
+```
+sudo nano /etc/mysql/my.cnf
+```
+add this at the end of the file 
+```
+[mysqld]
+bind-address    = 0.0.0.0
+```
+Go to grafana and add source MySQL.
 
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/0a018bfb-34fc-4a57-a0a7-a76ef892063f)
 
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/5d13e9ea-5e2b-4a82-8905-425b95403d1d)
 
+Google this isssue https://stackoverflow.com/questions/66974351/connecting-grafana-to-mysql-show-query-failed-why
+
+got to MySQL shell
+
+```
+mysql
+CREATE USER 'grafana'@'YourIP' IDENTIFIED BY 'password';
+GRANT SELECT ON my2.* TO 'grafana'@'184.72.213.38';
+FLUSH PRIVILEGES;
+
+```
+You can check if user was added by typi
+Firstly we create user grafana with password passord. Then we give him permission to read the my2 database. FLUSH PRIVILEGES is used in MySQL after updating the permission table to ensure that the MySQL server is using the latest permission configuration. Go bac kto grafana and try to add again MySQL as a source. select host, user from mysql.user; -> by typing this in mySQL shell u can check if grafana user was added.
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/8e43f4c3-32c7-44a1-9e80-2b8573874ff6)
+
+Go to https://grafana.com/grafana/dashboards/7991-2mysql-simple-dashboard/ and copy ID 
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/95bdb067-4266-432f-9c2d-ad6b5c4454a1)
+
+Then switch to Grafana -> dashboard tab -> new -> import 
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/5dd38122-0e96-4889-b113-378d0f19e1ca)
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/abe96b22-5908-4221-abfc-9f10ebdfd1fe)
+
+On my MySQL server, I can run these iptables rules to restrict incoming connections to port 3306 only for my Grafana server.
+```
+iptables -A INPUT -p tcp -s <your Grafana servers domain name or ip address> --dport 3306 -j ACCEPT
+iptables -A INPUT -p tcp --dport 3306 -j DROP
+iptables -L
+```
+
+iptables -A INPUT -p tcp -s <your Grafana servers domain name or ip address> --dport 3306 -j ACCEPT: To jest pierwsza reguła. Pozwala na przyjmowanie połączeń TCP na porcie 3306 z określonego adresu IP lub nazwy domeny, którą podałeś. Oznacza to, że tylko połączenia pochodzące z tego konkretnego źródła będą dozwolone na porcie 3306.
+
+iptables -A INPUT -p tcp --dport 3306 -j DROP: To jest druga reguła. Odrzuca (DROP) wszystkie inne połączenia TCP na porcie 3306, które nie pasują do pierwszej reguły. Oznacza to, że wszystkie połączenia na porcie 3306, które nie są zgodne z pierwszą regułą (np. połączenia z innych adresów IP), zostaną odrzucone.
+
+iptables -L: To polecenie wyświetla listę aktualnych reguł w firewall
+
+Its important to rememver that user my2 and grafana is READ ONLY permissions. So the cannot interrupt the actual database my2
