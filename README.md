@@ -4,7 +4,7 @@ A project showing how to create an example monitoring using EC2 instances from A
 [Installing Grafana](#installing-grafana-on-ec2)
  <br> [Adding IP to Domain](#adding-ip-to-domain)
  <br> [Reverse Proxy with Nginx](#reverse-proxy-with-nginx)
- <br> [DataSource: MySQL with custom Collector](#datasource:-mysql)
+ <br> [DataSource: MySQL](#datasource-mysql)
  
 ## Installing Grafana on EC2
 Start with creating EC2 Instance with Ubuntu. On purpose of this project I used the free tier options.
@@ -109,7 +109,7 @@ If everything was good you should see "nginx: configuration file /etc/nginx/ngin
 
 Now you can type Yourdomain.com and see that grafana is working on this address without :3000
 
-## DataSource: **DataSource: MySQL**
+## **DataSource MySQL**
 
 ![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/84d91627-98a4-43de-a6e4-e021a0abb193)
 
