@@ -36,8 +36,8 @@ or
 Start the Grafana server with systemd
 ```
 sudo systemctl daemon-reload
- sudo systemctl start grafana-server
- sudo systemctl status grafana-server
+sudo systemctl start grafana-server
+sudo systemctl status grafana-server
 ```
 
 If Grafna is running corectly you should see 
@@ -121,7 +121,8 @@ sudo apt update
 sudo apt install mysql-server
 sudo service mysql status
 ```
-
+<br/>Now that we have a MySQL server, we will install a dedicated collector for it that will periodically gather statistics about the MySQL server and store them into a table containing rows with times and values
+<br/>I have MySQL 8.#.#, so I will download the file called my2_80.sql. If you have MySQL 5, then download my2.sql
 Go to https://grafana.com/grafana/dashboards/7991-2mysql-simple-dashboard/ and downoland dashboard and github downoland this file my2_80.sql from https://github.com/meob/my2Collector . Use comand below to downoland this file.
 ```
 wget https://raw.githubusercontent.com/meob/my2Collector/master/my2_80.sql
@@ -130,33 +131,52 @@ Open this file with nano and uncomment last 3 lines
 
 ![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/0758d5d3-8f61-4ea7-b7f9-1ca2fe268ef1)
 
-Run this script with this command
+Run this script with this command. This will run a script and create a user and database
 ```
 sudo mysql < my2_80.sql
 ```
 
 Type 
+
 ```
 sudo mysql
 show databases;
-show databases;
+```
+Baza danych performance_schema w MySQL jest specjalnym narzędziem, które dostarcza dostęp do danych związanych z wydajnością działania serwera MySQL. Zawiera różne tabele i widoki, które oferują informacje na temat wewnętrznych operacji serwera, wykorzystania zasobów oraz metryk wydajności. W skrypcie po stworzeniu użytkownika my2 nadaliśmy mu uprawnienia do SELCT danych z bazy performance_schema. Baza my2 przechowuje dane w sposób imitujacy dane time series
+
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/f44a4f48-d1e2-4fe6-b2a3-5bb98a4bd1a3)
+
+
+Checking if event_scheduler in turned ON so he can push the data to Grafana
+
+```
 show variables where variable_name = 'event_scheduler';
+```
 
-![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/c09f58bc-f5ca-4b90-a2c2-5494a39f99cb)
+![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/c7f88bce-1ae4-48d6-b5d5-1952cf00c2c9)
 
-If it is OFF
-
-
-
+If it is OFF, add this to the end of file /etc/mysql/my.cnf
+```
+[mysqld]
+event_scheduler = on
+```
+reset MySQL
+```
+sudo service mysql restart
+```
 
 ```
 select host, user from mysql.user;
 use my2;
 show tables;
+```
+sprawdź co się znajduej w tabelach
+
+```
 select * from current;
 select * from status;
 quit
 ```
 
-![image](https://github.com/jeti20/Grafana-AWS/assets/61649661/0a2fb53a-5fda-4c38-9cb0-c64ae1f5bd45)
+
 
