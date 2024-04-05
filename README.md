@@ -23,6 +23,12 @@ apt-get update
 ```
 go to website https://grafana.com/grafana/download?edition=oss and follow steops for Ubuntu and Debian.
 
+```
+sudo apt-get install -y adduser libfontconfig1 musl
+wget https://dl.grafana.com/oss/release/grafana_10.4.1_amd64.deb
+sudo dpkg -i grafana_10.4.1_amd64.deb
+```
+
 Jeśli instalacja przebiegła pomyślnie włącz grafane by
 
 Start the Grafana server using init.d
