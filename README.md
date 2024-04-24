@@ -19,7 +19,7 @@ and copy example which involve your EC2 instance public IP. Open console in plac
 
 If you established connection with your machine type
 ```
-apt-get update
+sudo apt-get update
 ```
 go to website https://grafana.com/grafana/download?edition=oss and follow steops for Ubuntu and Debian.
 
